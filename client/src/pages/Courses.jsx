@@ -26,7 +26,7 @@ const Courses = () => {
             if (filters.difficulty !== 'all') params.append('difficulty', filters.difficulty);
             if (filters.search) params.append('search', filters.search);
 
-            const { data } = await axios.get(`http://localhost:5000/api/courses?${params.toString()}`);
+            const { data } = await axios.get(`http://localhost:5001/api/courses?${params.toString()}`);
             setCourses(data.courses);
         } catch (error) {
             console.error('Error fetching courses:', error);
@@ -37,7 +37,7 @@ const Courses = () => {
 
     const fetchCategories = async () => {
         try {
-            const { data } = await axios.get('http://localhost:5000/api/courses/categories');
+            const { data } = await axios.get('http://localhost:5001/api/courses/categories');
             setCategories(data);
         } catch (error) {
             console.error('Error fetching categories:', error);

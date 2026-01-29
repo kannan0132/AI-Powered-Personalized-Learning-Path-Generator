@@ -99,6 +99,44 @@ const Home = () => {
                     </Link>
                 </div>
             </section>
+
+            {/* Footer / Admin Link */}
+            <footer style={{
+                padding: '40px 20px',
+                borderTop: '1px solid rgba(255,255,255,0.05)',
+                textAlign: 'center',
+                background: 'rgba(0,0,0,0.2)'
+            }}>
+                <div style={{ marginBottom: '1rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                    &copy; 2026 EduAI. All rights reserved.
+                </div>
+                <Link to="/admin/login" className="btn" style={{
+                    color: 'var(--text-muted)',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    transition: 'all 0.3s',
+                    padding: '0.5rem 1.5rem',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    borderRadius: '8px',
+                    background: 'rgba(255,255,255,0.02)'
+                }}
+                    onMouseOver={(e) => {
+                        e.target.style.color = 'var(--primary)';
+                        e.target.style.borderColor = 'var(--primary)';
+                        e.target.style.background = 'rgba(255,255,255,0.05)';
+                    }}
+                    onMouseOut={(e) => {
+                        e.target.style.color = 'var(--text-muted)';
+                        e.target.style.borderColor = 'rgba(255,255,255,0.1)';
+                        e.target.style.background = 'rgba(255,255,255,0.02)';
+                    }}
+                >
+                    <ShieldCheck size={16} /> Admin Portal
+                </Link>
+            </footer>
         </div>
     );
 };

@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import {
     LayoutDashboard, Users, BookOpen, HelpCircle,
-    BarChart3, MessageSquare, LogOut, ChevronRight
+    BarChart3, MessageSquare, LogOut, ChevronRight, Shield
 } from 'lucide-react';
 import '../styles/AdminLayout.css';
 
@@ -16,6 +16,8 @@ const AdminLayout = ({ children }) => {
         { path: '/admin/users', icon: Users, label: 'Users' },
         { path: '/admin/courses', icon: BookOpen, label: 'Courses' },
         { path: '/admin/questions', icon: HelpCircle, label: 'Question Bank' },
+        { path: '/admin/ai-control', icon: Shield, label: 'AI Control' },
+        { path: '/admin/feedback', icon: MessageSquare, label: 'Feedback' },
     ];
 
     const isActive = (path) => {

@@ -29,7 +29,7 @@ const QuestionBank = () => {
             if (categoryFilter) params.append('category', categoryFilter);
             if (difficultyFilter) params.append('difficulty', difficultyFilter);
 
-            const res = await axios.get(`http://localhost:5000/api/admin/questions?${params}`, config);
+            const res = await axios.get(`http://localhost:5001/api/admin/questions?${params}`, config);
             setQuestions(res.data.questions);
             setCategories(res.data.categories);
             setTotalPages(res.data.totalPages);
@@ -46,9 +46,9 @@ const QuestionBank = () => {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
             const payload = { ...formData, correctAnswer: parseInt(formData.correctAnswer) };
             if (editingQuestion) {
-                await axios.put(`http://localhost:5000/api/admin/questions/${editingQuestion._id}`, payload, config);
+                await axios.put(`http://localhost:5001/api/admin/questions/${editingQuestion._id}`, payload, config);
             } else {
-                await axios.post('http://localhost:5000/api/admin/questions', payload, config);
+                await axios.post('http://localhost:5001/api/admin/questions', payload, config);
             }
             setShowModal(false);
             resetForm();
@@ -75,7 +75,7 @@ const QuestionBank = () => {
         if (!window.confirm('Delete this question?')) return;
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.delete(`http://localhost:5000/api/admin/questions/${id}`, config);
+            await axios.delete(`http://localhost:5001/api/admin/questions/${id}`, config);
             fetchQuestions();
         } catch (error) {
             console.error('Error deleting question:', error);

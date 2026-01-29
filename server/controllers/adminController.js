@@ -6,6 +6,8 @@ const Assessment = require('../models/Assessment');
 const Progress = require('../models/Progress');
 const Certificate = require('../models/Certificate');
 const Feedback = require('../models/Feedback');
+const Settings = require('../models/Settings');
+const jwt = require('jsonwebtoken');
 
 // @desc    Get admin dashboard stats
 // @route   GET /api/admin/stats
@@ -116,6 +118,52 @@ const updateUserRole = async (req, res) => {
         const user = await User.findByIdAndUpdate(
             req.params.id,
             { role },
+            { new: true }
+        ).select('-password');
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Block user
+// @route   PUT /api/admin/users/:id/block
+// @access  Admin
+const blockUser = async (req, res) => {
+    try {
+        if (req.params.id === req.user.id) {
+            return res.status(400).json({ message: 'Cannot block your own account' });
+        }
+
+        const user = await User.findByIdAndUpdate(
+            req.params.id,
+            { isBlocked: true },
+            { new: true }
+        ).select('-password');
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Unblock user
+// @route   PUT /api/admin/users/:id/unblock
+// @access  Admin
+const unblockUser = async (req, res) => {
+    try {
+        const user = await User.findByIdAndUpdate(
+            req.params.id,
+            { isBlocked: false },
             { new: true }
         ).select('-password');
 
@@ -352,6 +400,83 @@ const respondToFeedback = async (req, res) => {
     }
 };
 
+// @desc    Get system settings
+// @route   GET /api/admin/settings
+// @access  Admin
+const getSystemSettings = async (req, res) => {
+    try {
+        let settings = await Settings.findOne().sort({ updatedAt: -1 });
+        if (!settings) {
+            settings = await Settings.create({});
+        }
+        res.json(settings);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Update system settings
+// @route   PUT /api/admin/settings
+// @access  Admin
+const updateSystemSettings = async (req, res) => {
+    try {
+        const settings = await Settings.findOneAndUpdate(
+            {},
+            { ...req.body, updatedAt: Date.now(), updatedBy: req.user.id },
+            { new: true, upsert: true }
+        );
+        res.json(settings);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Admin login
+// @route   POST /api/admin/login
+// @access  Public
+const adminLogin = async (req, res) => {
+    console.log('Admin login attempt for:', req.body.email);
+    const { email, password, adminKey } = req.body;
+
+    // Verify admin key first
+    if (adminKey !== process.env.ADMIN_KEY) {
+        return res.status(403).json({ message: 'Invalid Admin Security Key' });
+    }
+
+    try {
+        const user = await User.findOne({ email });
+
+        if (user && (await user.matchPassword(password))) {
+            if (user.role !== 'Admin') {
+                return res.status(403).json({ message: 'Access denied. Admin role required.' });
+            }
+
+            if (user.isBlocked) {
+                console.log('Admin login failed: Account blocked for', req.body.email);
+                return res.status(403).json({ message: 'Your account has been blocked. Please contact support.' });
+            }
+
+            // Token generation
+            const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET || 'secret', {
+                expiresIn: '30d'
+            });
+
+            console.log('Admin login successful for:', req.body.email);
+            res.json({
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                token: token
+            });
+        } else {
+            res.status(401).json({ message: 'Invalid email or password' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     getDashboardStats,
     getUsers,
@@ -365,5 +490,10 @@ module.exports = {
     updateCourse,
     deleteCourse,
     getAllFeedback,
-    respondToFeedback
+    respondToFeedback,
+    blockUser,
+    unblockUser,
+    getSystemSettings,
+    updateSystemSettings,
+    adminLogin
 };

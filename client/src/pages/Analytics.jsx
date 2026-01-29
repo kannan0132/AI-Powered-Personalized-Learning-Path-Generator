@@ -18,8 +18,8 @@ const Analytics = () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
             const [perfRes, topicsRes] = await Promise.all([
-                axios.get('http://localhost:5000/api/analytics/performance', config),
-                axios.get('http://localhost:5000/api/analytics/difficult-topics', config)
+                axios.get('http://localhost:5001/api/analytics/performance', config),
+                axios.get('http://localhost:5001/api/analytics/difficult-topics', config)
             ]);
             setAnalytics(perfRes.data);
             setDifficultTopics(topicsRes.data);

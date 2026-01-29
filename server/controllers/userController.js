@@ -11,7 +11,7 @@ const generateToken = (id, role) => {
 // @route   POST /api/users/register
 // @access  Public
 const registerUser = async (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, adminKey } = req.body;
 
     const userExists = await User.findOne({ email });
 
@@ -19,10 +19,13 @@ const registerUser = async (req, res) => {
         return res.status(400).json({ message: 'User already exists' });
     }
 
+    const role = adminKey === process.env.ADMIN_KEY ? 'Admin' : 'Student';
+
     const user = await User.create({
         name,
         email,
-        password
+        password,
+        role
     });
 
     if (user) {
@@ -47,6 +50,9 @@ const authUser = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (user && (await user.matchPassword(password))) {
+        if (user.isBlocked) {
+            return res.status(403).json({ message: 'Your account has been blocked. Please contact support.' });
+        }
         res.json({
             _id: user._id,
             name: user.name,

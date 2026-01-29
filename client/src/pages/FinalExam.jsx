@@ -44,7 +44,7 @@ const FinalExam = () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
             const res = await axios.get(
-                `http://localhost:5000/api/certification/exam/${courseId}`,
+                `http://localhost:5001/api/certification/exam/${courseId}`,
                 config
             );
             setExamInfo(res.data);
@@ -60,7 +60,7 @@ const FinalExam = () => {
             setLoading(true);
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
             const res = await axios.post(
-                `http://localhost:5000/api/certification/exam/${courseId}/start`,
+                `http://localhost:5001/api/certification/exam/${courseId}/start`,
                 {},
                 config
             );
@@ -95,7 +95,7 @@ const FinalExam = () => {
             }));
 
             const res = await axios.post(
-                `http://localhost:5000/api/certification/exam/${attempt._id}/submit`,
+                `http://localhost:5001/api/certification/exam/${attempt._id}/submit`,
                 { answers: formattedAnswers, totalTimeTaken: (examInfo.exam.duration * 60) - timeLeft },
                 config
             );

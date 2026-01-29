@@ -26,6 +26,9 @@ const Navbar = () => {
                             <Link to="/dashboard" className={`nav-link ${isActive('/dashboard') ? 'active' : ''}`}>Dashboard</Link>
                             <Link to="/learning-path" className={`nav-link ${isActive('/learning-path') ? 'active' : ''}`}>My Path</Link>
                             <Link to="/progress" className={`nav-link ${isActive('/progress') ? 'active' : ''}`}>Progress</Link>
+                            {user.role === 'Admin' && (
+                                <Link to="/admin" className="nav-link admin-link" style={{ color: 'var(--primary)', fontWeight: '600' }}>Admin Panel</Link>
+                            )}
                         </>
                     )}
                 </div>

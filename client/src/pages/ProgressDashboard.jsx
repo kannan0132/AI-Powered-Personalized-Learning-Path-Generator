@@ -30,9 +30,9 @@ const ProgressDashboard = () => {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
 
             const [statsRes, weeklyRes, activityRes] = await Promise.all([
-                axios.get('http://localhost:5000/api/progress/stats', config),
-                axios.get('http://localhost:5000/api/progress/weekly', config),
-                axios.get('http://localhost:5000/api/progress/activity?limit=10', config)
+                axios.get('http://localhost:5001/api/progress/stats', config),
+                axios.get('http://localhost:5001/api/progress/weekly', config),
+                axios.get('http://localhost:5001/api/progress/activity?limit=10', config)
             ]);
 
             setStats(statsRes.data);

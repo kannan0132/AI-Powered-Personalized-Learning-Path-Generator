@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Users, BookOpen, HelpCircle, Award, TrendingUp, Clock } from 'lucide-react';
+import { Users, BookOpen, HelpCircle, Award, TrendingUp, Clock, Shield, MessageSquare, ChevronRight } from 'lucide-react';
 
 const AdminDashboard = () => {
     const { user } = useContext(AuthContext);
+    const navigate = useNavigate();
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -15,7 +17,7 @@ const AdminDashboard = () => {
     const fetchStats = async () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const res = await axios.get('http://localhost:5000/api/admin/stats', config);
+            const res = await axios.get('http://localhost:5001/api/admin/stats', config);
             setStats(res.data);
         } catch (error) {
             console.error('Error fetching stats:', error);
@@ -135,6 +137,53 @@ const AdminDashboard = () => {
                         <div style={{ color: '#8b5cf6', fontSize: '1.5rem', fontWeight: 600 }}>{stats?.achievements?.lessonsCompleted || 0}</div>
                     </div>
                 </div>
+            </div>
+
+            <div className="glass-card clickable"
+                onClick={() => navigate('/admin/ai-control')}
+                style={{
+                    padding: '1.5rem',
+                    marginTop: '1.5rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    background: 'linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(168,85,247,0.1) 100%)',
+                    border: '1px solid rgba(99,102,241,0.2)'
+                }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <div style={{ padding: '0.75rem', background: 'rgba(99,102,241,0.2)', borderRadius: '12px', color: '#6366f1' }}>
+                        <Shield size={24} />
+                    </div>
+                    <div>
+                        <h3 style={{ color: '#f1f5f9', marginBottom: '0.25rem' }}>AI Recommendation Engine</h3>
+                        <p style={{ color: '#94a3b8', fontSize: '0.9rem' }}>Adjust algorithm weights and monitor system performance</p>
+                    </div>
+                </div>
+                <ChevronRight size={24} style={{ color: '#6366f1' }} />
+            </div>
+
+            <div className="glass-card clickable"
+                onClick={() => navigate('/admin/feedback')}
+                style={{
+                    padding: '1.5rem',
+                    marginTop: '1.5rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    background: 'linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(5,150,105,0.1) 100%)',
+                    border: '1px solid rgba(16,185,129,0.2)',
+                    marginBottom: '2rem'
+                }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <div style={{ padding: '0.75rem', background: 'rgba(16,185,129,0.2)', borderRadius: '12px', color: '#10b981' }}>
+                        <MessageSquare size={24} />
+                    </div>
+                    <div>
+                        <h3 style={{ color: '#f1f5f9', marginBottom: '0.25rem' }}>Feedback Monitoring</h3>
+                        <p style={{ color: '#94a3b8', fontSize: '0.9rem' }}>View and resolve user issues and suggestions</p>
+                    </div>
+                </div>
+                <ChevronRight size={24} style={{ color: '#10b981' }} />
             </div>
         </div>
     );

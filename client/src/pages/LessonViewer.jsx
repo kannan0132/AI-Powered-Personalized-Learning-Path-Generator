@@ -28,7 +28,7 @@ const LessonViewer = () => {
             const config = {
                 headers: { Authorization: `Bearer ${user.token}` }
             };
-            const { data } = await axios.get(`http://localhost:5000/api/lessons/${id}`, config);
+            const { data } = await axios.get(`http://localhost:5001/api/lessons/${id}`, config);
             setLesson(data);
         } catch (error) {
             console.error('Error fetching lesson:', error);
@@ -42,7 +42,7 @@ const LessonViewer = () => {
             const config = {
                 headers: { Authorization: `Bearer ${user.token}` }
             };
-            const { data } = await axios.get(`http://localhost:5000/api/lessons/${id}/navigation`, config);
+            const { data } = await axios.get(`http://localhost:5001/api/lessons/${id}/navigation`, config);
             setNavigation(data);
         } catch (error) {
             console.error('Error fetching navigation:', error);

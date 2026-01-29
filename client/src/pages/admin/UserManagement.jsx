@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import axios from 'axios';
-import { Users, Search, Shield, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Users, Search, Shield, Trash2, ChevronLeft, ChevronRight, Lock, Unlock } from 'lucide-react';
 
 const UserManagement = () => {
     const { user } = useContext(AuthContext);
@@ -23,7 +23,7 @@ const UserManagement = () => {
             if (search) params.append('search', search);
             if (roleFilter) params.append('role', roleFilter);
 
-            const res = await axios.get(`http://localhost:5000/api/admin/users?${params}`, config);
+            const res = await axios.get(`http://localhost:5001/api/admin/users?${params}`, config);
             setUsers(res.data.users);
             setTotalPages(res.data.totalPages);
         } catch (error) {
@@ -42,10 +42,21 @@ const UserManagement = () => {
     const handleRoleChange = async (userId, newRole) => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.put(`http://localhost:5000/api/admin/users/${userId}/role`, { role: newRole }, config);
+            await axios.put(`http://localhost:5001/api/admin/users/${userId}/role`, { role: newRole }, config);
             fetchUsers();
         } catch (error) {
             console.error('Error updating role:', error);
+        }
+    };
+
+    const toggleBlock = async (userId, isBlocked) => {
+        try {
+            const config = { headers: { Authorization: `Bearer ${user.token}` } };
+            const endpoint = isBlocked ? 'unblock' : 'block';
+            await axios.put(`http://localhost:5001/api/admin/users/${userId}/${endpoint}`, {}, config);
+            fetchUsers();
+        } catch (error) {
+            console.error(`Error ${isBlocked ? 'unblocking' : 'blocking'} user:`, error);
         }
     };
 
@@ -53,7 +64,7 @@ const UserManagement = () => {
         if (!window.confirm('Are you sure you want to delete this user?')) return;
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.delete(`http://localhost:5000/api/admin/users/${userId}`, config);
+            await axios.delete(`http://localhost:5001/api/admin/users/${userId}`, config);
             fetchUsers();
         } catch (error) {
             console.error('Error deleting user:', error);
@@ -132,15 +143,25 @@ const UserManagement = () => {
                                             </td>
                                             <td>{u.skillLevel}</td>
                                             <td>{new Date(u.createdAt).toLocaleDateString()}</td>
-                                            <td>
-                                                <button
-                                                    className="action-btn danger"
-                                                    onClick={() => handleDelete(u._id)}
-                                                    disabled={u._id === user.id}
-                                                    title={u._id === user.id ? "Can't delete yourself" : "Delete user"}
-                                                >
-                                                    <Trash2 size={18} />
-                                                </button>
+                                            <td className="actions-cell">
+                                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                                    <button
+                                                        className={`action-btn ${u.isBlocked ? 'success' : 'warning'}`}
+                                                        onClick={() => toggleBlock(u._id, u.isBlocked)}
+                                                        disabled={u._id === user.id}
+                                                        title={u.isBlocked ? 'Unblock user' : 'Block user'}
+                                                    >
+                                                        {u.isBlocked ? <Unlock size={18} /> : <Lock size={18} />}
+                                                    </button>
+                                                    <button
+                                                        className="action-btn danger"
+                                                        onClick={() => handleDelete(u._id)}
+                                                        disabled={u._id === user.id}
+                                                        title={u._id === user.id ? "Can't delete yourself" : "Delete user"}
+                                                    >
+                                                        <Trash2 size={18} />
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     ))}

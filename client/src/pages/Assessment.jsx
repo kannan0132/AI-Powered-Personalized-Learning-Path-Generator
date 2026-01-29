@@ -29,7 +29,7 @@ const Assessment = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const { data } = await axios.get('http://localhost:5000/api/assessment/categories');
+                const { data } = await axios.get('http://localhost:5001/api/assessment/categories');
                 setCategories(data);
             } catch (err) {
                 console.error('Error fetching categories:', err);
@@ -77,7 +77,7 @@ const Assessment = () => {
             params.append('count', '10');
 
             const { data } = await axios.get(
-                `http://localhost:5000/api/assessment/questions?${params.toString()}`,
+                `http://localhost:5001/api/assessment/questions?${params.toString()}`,
                 config
             );
 
@@ -143,7 +143,7 @@ const Assessment = () => {
             }));
 
             const { data } = await axios.post(
-                'http://localhost:5000/api/assessment/submit',
+                'http://localhost:5001/api/assessment/submit',
                 { answers: formattedAnswers, totalTimeTaken: totalTime },
                 config
             );

@@ -19,7 +19,7 @@ const CourseDetail = () => {
 
     const fetchCourse = async () => {
         try {
-            const { data } = await axios.get(`http://localhost:5000/api/courses/${id}`);
+            const { data } = await axios.get(`http://localhost:5001/api/courses/${id}`);
             setCourse(data);
         } catch (error) {
             console.error('Error fetching course:', error);
@@ -39,7 +39,7 @@ const CourseDetail = () => {
             const config = {
                 headers: { Authorization: `Bearer ${user.token}` }
             };
-            await axios.post(`http://localhost:5000/api/courses/${id}/enroll`, {}, config);
+            await axios.post(`http://localhost:5001/api/courses/${id}/enroll`, {}, config);
             // Refresh course data
             fetchCourse();
         } catch (error) {

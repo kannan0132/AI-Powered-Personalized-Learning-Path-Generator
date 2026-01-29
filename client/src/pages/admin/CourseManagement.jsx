@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import axios from 'axios';
-import { BookOpen, Plus, Edit, Trash2, Eye, EyeOff, X } from 'lucide-react';
+import { BookOpen, Plus, Edit, Trash2, Eye, EyeOff, X, List } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const CourseManagement = () => {
     const { user } = useContext(AuthContext);
+    const navigate = useNavigate();
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
@@ -23,7 +25,7 @@ const CourseManagement = () => {
     const fetchCourses = async () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const res = await axios.get('http://localhost:5000/api/courses', config);
+            const res = await axios.get('http://localhost:5001/api/courses', config);
             setCourses(res.data);
         } catch (error) {
             console.error('Error fetching courses:', error);
@@ -37,9 +39,9 @@ const CourseManagement = () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
             if (editingCourse) {
-                await axios.put(`http://localhost:5000/api/admin/courses/${editingCourse._id}`, formData, config);
+                await axios.put(`http://localhost:5001/api/admin/courses/${editingCourse._id}`, formData, config);
             } else {
-                await axios.post('http://localhost:5000/api/admin/courses', formData, config);
+                await axios.post('http://localhost:5001/api/admin/courses', formData, config);
             }
             setShowModal(false);
             setEditingCourse(null);
@@ -67,7 +69,7 @@ const CourseManagement = () => {
         if (!window.confirm('Are you sure? This will also delete all lessons.')) return;
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.delete(`http://localhost:5000/api/admin/courses/${courseId}`, config);
+            await axios.delete(`http://localhost:5001/api/admin/courses/${courseId}`, config);
             fetchCourses();
         } catch (error) {
             console.error('Error deleting course:', error);
@@ -77,7 +79,7 @@ const CourseManagement = () => {
     const togglePublish = async (course) => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.put(`http://localhost:5000/api/admin/courses/${course._id}`,
+            await axios.put(`http://localhost:5001/api/admin/courses/${course._id}`,
                 { isPublished: !course.isPublished }, config);
             fetchCourses();
         } catch (error) {
@@ -126,6 +128,7 @@ const CourseManagement = () => {
                                             </button>
                                         </td>
                                         <td style={{ display: 'flex', gap: '0.5rem' }}>
+                                            <button className="action-btn" onClick={() => navigate(`/admin/courses/${course._id}/lessons`)} title="Manage Lessons"><List size={18} /></button>
                                             <button className="action-btn" onClick={() => handleEdit(course)}><Edit size={18} /></button>
                                             <button className="action-btn danger" onClick={() => handleDelete(course._id)}><Trash2 size={18} /></button>
                                         </td>

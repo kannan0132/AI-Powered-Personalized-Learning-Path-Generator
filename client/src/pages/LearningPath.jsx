@@ -63,7 +63,7 @@ const LearningPath = () => {
     const fetchActivePath = async () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.get('http://localhost:5000/api/learning-path/active', config);
+            const { data } = await axios.get('http://localhost:5001/api/learning-path/active', config);
             setActivePath(data);
         } catch (error) {
             if (error.response?.status !== 404) {
@@ -75,7 +75,7 @@ const LearningPath = () => {
     const fetchRecommendations = async () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.get('http://localhost:5000/api/learning-path/recommendations', config);
+            const { data } = await axios.get('http://localhost:5001/api/learning-path/recommendations', config);
             setRecommendations(data);
         } catch (error) {
             console.error('Error fetching recommendations:', error);
@@ -86,7 +86,7 @@ const LearningPath = () => {
         setGenerating(true);
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.post('http://localhost:5000/api/learning-path/generate', {}, config);
+            const { data } = await axios.post('http://localhost:5001/api/learning-path/generate', {}, config);
             // Simulate a bit more time for aesthetic effect if it's too fast
             await new Promise(resolve => setTimeout(resolve, 6000));
             setActivePath(data);

@@ -24,6 +24,10 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import UserManagement from './pages/admin/UserManagement';
 import CourseManagement from './pages/admin/CourseManagement';
 import QuestionBank from './pages/admin/QuestionBank';
+import AIControl from './pages/admin/AIControl';
+import LessonManagement from './pages/admin/LessonManagement';
+import AdminLogin from './pages/admin/AdminLogin';
+import AdminFeedback from './pages/admin/AdminFeedback';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = React.useContext(AuthContext);
@@ -34,7 +38,7 @@ const ProtectedRoute = ({ children }) => {
 const AdminRoute = ({ children }) => {
   const { user, loading } = React.useContext(AuthContext);
   if (loading) return <div>Loading...</div>;
-  if (!user) return <Navigate to="/login" />;
+  if (!user) return <Navigate to="/admin/login" />;
   if (user.role !== 'Admin') return <Navigate to="/dashboard" />;
   return <AdminLayout>{children}</AdminLayout>;
 };
@@ -62,10 +66,14 @@ function App() {
           <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
           <Route path="/feedback" element={<ProtectedRoute><FeedbackForm /></ProtectedRoute>} />
           {/* Admin Routes */}
+          <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
           <Route path="/admin/users" element={<AdminRoute><UserManagement /></AdminRoute>} />
           <Route path="/admin/courses" element={<AdminRoute><CourseManagement /></AdminRoute>} />
           <Route path="/admin/questions" element={<AdminRoute><QuestionBank /></AdminRoute>} />
+          <Route path="/admin/ai-control" element={<AdminRoute><AIControl /></AdminRoute>} />
+          <Route path="/admin/courses/:courseId/lessons" element={<AdminRoute><LessonManagement /></AdminRoute>} />
+          <Route path="/admin/feedback" element={<AdminRoute><AdminFeedback /></AdminRoute>} />
         </Routes>
       </Router>
     </AuthProvider>

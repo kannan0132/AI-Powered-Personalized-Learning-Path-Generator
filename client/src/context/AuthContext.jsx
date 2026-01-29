@@ -15,16 +15,27 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, []);
 
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+
     const login = async (email, password) => {
-        const { data } = await axios.post('http://localhost:5000/api/users/login', { email, password });
+        const { data } = await axios.post(`${API_URL}/users/login`, { email, password });
         setUser(data);
         localStorage.setItem('userInfo', JSON.stringify(data));
+        return data;
     };
 
-    const register = async (name, email, password) => {
-        const { data } = await axios.post('http://localhost:5000/api/users/register', { name, email, password });
+    const adminLogin = async (email, password, adminKey) => {
+        const { data } = await axios.post(`${API_URL}/admin/login`, { email, password, adminKey });
         setUser(data);
         localStorage.setItem('userInfo', JSON.stringify(data));
+        return data;
+    };
+
+    const register = async (name, email, password, adminKey) => {
+        const { data } = await axios.post(`${API_URL}/users/register`, { name, email, password, adminKey });
+        setUser(data);
+        localStorage.setItem('userInfo', JSON.stringify(data));
+        return data;
     };
 
     const logout = () => {
@@ -38,13 +49,13 @@ export const AuthProvider = ({ children }) => {
                 Authorization: `Bearer ${user.token}`
             }
         };
-        const { data } = await axios.put('http://localhost:5000/api/users/profile', profileData, config);
+        const { data } = await axios.put(`${API_URL}/users/profile`, profileData, config);
         setUser(data);
         localStorage.setItem('userInfo', JSON.stringify(data));
     };
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, register, logout, updateProfile }}>
+        <AuthContext.Provider value={{ user, loading, login, adminLogin, register, logout, updateProfile }}>
             {children}
         </AuthContext.Provider>
     );

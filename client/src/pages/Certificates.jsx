@@ -18,7 +18,7 @@ const Certificates = () => {
     const fetchCertificates = async () => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const res = await axios.get('http://localhost:5000/api/certification/certificates', config);
+            const res = await axios.get('http://localhost:5001/api/certification/certificates', config);
             setCertificates(res.data);
         } catch (error) {
             console.error('Error fetching certificates:', error);
@@ -34,7 +34,7 @@ const Certificates = () => {
                 responseType: 'blob'
             };
             const res = await axios.get(
-                `http://localhost:5000/api/certification/certificate/${certId}/download`,
+                `http://localhost:5001/api/certification/certificate/${certId}/download`,
                 config
             );
 

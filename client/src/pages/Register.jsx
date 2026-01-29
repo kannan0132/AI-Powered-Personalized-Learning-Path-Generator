@@ -6,16 +6,24 @@ const Register = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [adminKey, setAdminKey] = useState('');
     const { register } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await register(name, email, password);
-            navigate('/profile-setup');
+            const user = await register(name, email, password, adminKey);
+            if (user?.role === 'Admin') {
+                navigate('/admin');
+            } else {
+                navigate('/profile-setup');
+            }
         } catch (error) {
-            alert('Registration failed');
+            const message = error.response?.data?.message ||
+                error.response?.data?.errors?.[0]?.message ||
+                'Registration failed';
+            alert(message);
         }
     };
 
@@ -32,6 +40,9 @@ const Register = () => {
 
                     <label>Password</label>
                     <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+
+                    <label>Admin Key (Optional)</label>
+                    <input type="password" placeholder="Only for administrators" value={adminKey} onChange={(e) => setAdminKey(e.target.value)} />
 
                     <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '1rem' }}>Sign Up</button>
                 </form>
